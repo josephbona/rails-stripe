@@ -1,0 +1,45 @@
+<h1>Subscribe</h1>
+
+<% if current_user.card_last4? %>
+  <%= form_tag subscription_path, id: "existing-card" do %>
+    <p>Pay with existing card:</p>
+    <div><strong>Card on file:</strong> <%= current_user.card_brand %> (**** **** **** <%= current_user.card_last4 %>)</div>
+    <div><strong>Expiration:</strong> <%= current_user.card_exp_month %> / <%= current_user.card_exp_year %></div>
+    <p>or <%= link_to "add a new card", "#", class: "show-card-form" %></p>
+
+    <%= hidden_field_tag :plan, params[:plan] %>
+
+    <input type="submit" class="submit" value="Submit Payment">
+  <% end %>
+<% end%>
+
+<%= form_tag subscription_path, id: "payment-form", style: (current_user.card_last4? ? "display:none" : nil) do %>
+  <span class="payment-errors"></span>
+
+  <div class="form-row">
+    <label>
+      <span>Card Number</span>
+      <input type="text" size="20" data-stripe="number" value="4242 4242 4242 4242">
+    </label>
+  </div>
+
+  <div class="form-row">
+    <label>
+      <span>Expiration (MM/YY)</span>
+      <input type="text" size="2" data-stripe="exp_month" value="12">
+    </label>
+    <span> / </span>
+    <input type="text" size="2" data-stripe="exp_year" value="20">
+  </div>
+
+  <div class="form-row">
+    <label>
+      <span>CVC</span>
+      <input type="text" size="4" data-stripe="cvc" value="123">
+    </label>
+  </div>
+
+  <%= hidden_field_tag :plan, params[:plan] %>
+
+  <input type="submit" class="submit" value="Submit Payment">
+<% end %>
